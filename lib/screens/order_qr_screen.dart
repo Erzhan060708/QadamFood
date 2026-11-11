@@ -11,14 +11,14 @@ class OrderQrScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F8F3),
+      backgroundColor: const Color(0xFFF8FAF7),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF9F8F3),
+        backgroundColor: const Color(0xFFF8FAF7),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text('Show this at the store',
+        iconTheme: const IconThemeData(color: Color(0xFF173B30)),
+        title: const Text('Кафеде осы QR кодты көрсетіңіз',
             style: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold)),
+                color: Color(0xFF173B30), fontWeight: FontWeight.w800)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -46,9 +46,9 @@ class OrderQrScreen extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(Icons.access_time,
-                            size: 16, color: Color(0xFF005C4B)),
+                            size: 16, color: Color(0xFF0A5443)),
                         const SizedBox(width: 4),
-                        Text('Pick up: ${order.pickupTime}',
+                        Text('Алып кету: ${order.pickupTime}',
                             style: const TextStyle(fontSize: 13)),
                       ],
                     ),
@@ -66,7 +66,7 @@ class OrderQrScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
+                        color: Colors.black.withValues(alpha: 0.06),
                         blurRadius: 20,
                         offset: const Offset(0, 8)),
                   ],
@@ -80,16 +80,16 @@ class OrderQrScreen extends StatelessWidget {
                       backgroundColor: Colors.white,
                       eyeStyle: const QrEyeStyle(
                         eyeShape: QrEyeShape.square,
-                        color: Color(0xFF005C4B),
+                        color: Color(0xFF0A5443),
                       ),
                       dataModuleStyle: const QrDataModuleStyle(
                         dataModuleShape: QrDataModuleShape.square,
-                        color: Color(0xFF005C4B),
+                        color: Color(0xFF0A5443),
                       ),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Order code: ${order.qrCode}',
+                      'Тапсырыс коды: ${order.qrCode}',
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade700,
@@ -111,12 +111,11 @@ class OrderQrScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline,
-                        color: Color(0xFF005C4B)),
+                    const Icon(Icons.info_outline, color: Color(0xFF0A5443)),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Show this QR code to the store staff when you pick up your bag. They will scan it to confirm.',
+                        'Пакетті алар кезде осы QR кодты кафе қызметкеріне көрсетіңіз. Ол тапсырысты растау үшін сканерлейді.',
                         style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey.shade800,

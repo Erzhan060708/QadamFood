@@ -13,26 +13,44 @@ class QadamFoodApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = GoogleFonts.interTextTheme();
+    final textTheme = GoogleFonts.interTextTheme().copyWith(
+      headlineLarge: GoogleFonts.poppins(
+          fontSize: 34, fontWeight: FontWeight.w800, letterSpacing: -0.8),
+      headlineMedium: GoogleFonts.poppins(
+          fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: -0.5),
+      titleLarge:
+          GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700),
+    );
     return MaterialApp(
       title: 'Qadam Food',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         primaryColor: const Color(0xFF0A5443),
-        scaffoldBackgroundColor: const Color(0xFFF5EFE6),
+        scaffoldBackgroundColor: const Color(0xFFF8FAF7),
         textTheme: textTheme,
-        appBarTheme: AppBarTheme(titleTextStyle: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+        appBarTheme: AppBarTheme(
+            backgroundColor: const Color(0xFFF8FAF7),
+            elevation: 0,
+            titleTextStyle: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF173B30))),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF0A5443),
           primary: const Color(0xFF0A5443),
+          secondary: const Color(0xFFFF8A00),
+          surface: Colors.white,
         ),
       ),
       home: const MainScreen(),
       onGenerateRoute: (settings) {
-        final match = RegExp(r'^/merchant/(\d+)$').firstMatch(settings.name ?? '');
+        final match =
+            RegExp(r'^/merchant/(\d+)$').firstMatch(settings.name ?? '');
         if (match != null) {
-          return MaterialPageRoute(builder: (_) => MerchantPortalScreen(storeId: int.parse(match.group(1)!)));
+          return MaterialPageRoute(
+              builder: (_) =>
+                  MerchantPortalScreen(storeId: int.parse(match.group(1)!)));
         }
         return null;
       },

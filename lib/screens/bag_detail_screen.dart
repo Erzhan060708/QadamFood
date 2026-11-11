@@ -49,10 +49,14 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
     } catch (e) {
       if (!mounted) return;
       final msg = e.toString();
-      if (msg.contains('кіріңіз') || msg.contains('401') || msg.contains('Қате токен')) {
-        await Navigator.push(context, MaterialPageRoute(builder: (_) => const AuthScreen()));
+      if (msg.contains('кіріңіз') ||
+          msg.contains('401') ||
+          msg.contains('Қате токен')) {
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const AuthScreen()));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Қате: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Қате: $e')));
       }
     } finally {
       if (mounted) setState(() => isBuying = false);
@@ -64,22 +68,32 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
     final bag = widget.bag;
     final currency = NumberFormat.currency(symbol: '₸', decimalDigits: 0);
     final image = bag.imageUrl ?? bag.storeImageUrl;
+    final heroHeight =
+        (MediaQuery.sizeOf(context).width * .48).clamp(320.0, 700.0).toDouble();
+    final imageFit = const {
+      'assets/stores/the_hleb.png',
+      'assets/stores/vostok.png',
+      'assets/stores/damdi_bauyrsak.png',
+    }.contains(image)
+        ? BoxFit.cover
+        : BoxFit.contain;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EFE6),
+      backgroundColor: const Color(0xFFF8FAF7),
       body: Column(
         children: [
           Expanded(
             child: CustomScrollView(
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 240,
+                  expandedHeight: heroHeight,
                   pinned: true,
                   backgroundColor: const Color(0xFF0A5443),
                   foregroundColor: Colors.white,
                   actions: [
                     IconButton(
-                      icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                      icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border),
                       onPressed: () async {
                         final next = await FavoritesService.toggle(bag.id);
                         setState(() => isFavorite = next);
@@ -87,11 +101,33 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
                     ),
                   ],
                   flexibleSpace: FlexibleSpaceBar(
-                    title: Text(bag.storeName, style: const TextStyle(fontSize: 16)),
-                    background: image != null
-                        ? Image.network(image, fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0A5443)))
-                        : Container(color: const Color(0xFF0A5443)),
+                    title: Text(bag.storeName,
+                        style: const TextStyle(fontSize: 16)),
+                    background: image == null || image.isEmpty
+                        ? Container(color: const Color(0xFF0A5443))
+                        : Stack(fit: StackFit.expand, children: [
+                            if (image.startsWith('assets/'))
+                              Image.asset(image,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) =>
+                                      Container(color: const Color(0xFF0A5443)))
+                            else
+                              Image.network(image,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                      color: const Color(0xFF0A5443))),
+                            Container(color: const Color(0x880A5443)),
+                            if (image.startsWith('assets/'))
+                              Image.asset(image,
+                                  fit: imageFit,
+                                  errorBuilder: (_, __, ___) =>
+                                      const SizedBox.shrink())
+                            else
+                              Image.network(image,
+                                  fit: imageFit,
+                                  errorBuilder: (_, __, ___) =>
+                                      const SizedBox.shrink()),
+                          ]),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -103,9 +139,11 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFF8A00).withValues(alpha: 0.15),
+                                color: const Color(0xFFFF8A00)
+                                    .withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -117,30 +155,52 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text(bag.storeCategory, style: TextStyle(color: Colors.grey.shade600)),
+                            Text(bag.storeCategory,
+                                style: TextStyle(color: Colors.grey.shade600)),
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text(bag.title, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: Color(0xFF0A2E26))),
+                        Text(bag.title,
+                            style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF0A2E26))),
                         const SizedBox(height: 8),
                         Text(
-                          bag.description ?? 'Сюрприз-пакет: кафенің күн соңындағы тағамдары 50–70% арзан.',
-                          style: const TextStyle(fontSize: 15, height: 1.5, color: Color(0xFF6B7280)),
+                          bag.description ??
+                              'Сюрприз-пакет: кафенің күн соңындағы тағамдары 50–70% арзан.',
+                          style: const TextStyle(
+                              fontSize: 15,
+                              height: 1.5,
+                              color: Color(0xFF6B7280)),
                         ),
                         const SizedBox(height: 20),
                         Row(
                           children: [
                             Text(currency.format(bag.originalPrice),
-                                style: const TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey, fontSize: 16)),
+                                style: const TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                    color: Colors.grey,
+                                    fontSize: 16)),
                             const SizedBox(width: 10),
                             Text(currency.format(bag.discountedPrice),
-                                style: const TextStyle(color: Color(0xFF0A5443), fontWeight: FontWeight.bold, fontSize: 28)),
+                                style: const TextStyle(
+                                    color: Color(0xFF0A5443),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28)),
                           ],
                         ),
                         const SizedBox(height: 20),
-                        _infoTile(Icons.access_time, 'Алып кету', bag.pickupTime),
-                        _infoTile(Icons.place_outlined, 'Мекенжай', bag.storeAddress.isEmpty ? 'Алматы' : bag.storeAddress),
-                        _infoTile(Icons.inventory_2_outlined, 'Қалды', '${bag.quantityAvailable} пакет'),
+                        _infoTile(
+                            Icons.access_time, 'Алып кету', bag.pickupTime),
+                        _infoTile(
+                            Icons.place_outlined,
+                            'Мекенжай',
+                            bag.storeAddress.isEmpty
+                                ? 'Алматы'
+                                : bag.storeAddress),
+                        _infoTile(Icons.inventory_2_outlined, 'Қалды',
+                            '${bag.quantityAvailable} пакет'),
                         _infoTile(Icons.star, 'Рейтинг', '${bag.storeRating}'),
                         const SizedBox(height: 12),
                         Container(
@@ -152,7 +212,8 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
                           ),
                           child: const Text(
                             'Сатып алғаннан кейін QR-код шығады. Оны кафе қызметкеріне көрсетіңіз.',
-                            style: TextStyle(height: 1.4, color: Color(0xFF0A2E26)),
+                            style: TextStyle(
+                                height: 1.4, color: Color(0xFF0A2E26)),
                           ),
                         ),
                         const SizedBox(height: 80),
@@ -173,13 +234,19 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
                   onPressed: isBuying || bag.isSoldOut ? null : _buyBag,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0A5443),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   child: isBuying
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          bag.isSoldOut ? 'Таусылған' : 'Сатып алу · ${currency.format(bag.discountedPrice)}',
-                          style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                          bag.isSoldOut
+                              ? 'Таусылған'
+                              : 'Сатып алу · ${currency.format(bag.discountedPrice)}',
+                          style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
                         ),
                 ),
               ),
@@ -208,8 +275,11 @@ class _BagDetailScreenState extends State<BagDetailScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+              Text(label,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+              Text(value,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 14)),
             ],
           ),
         ],

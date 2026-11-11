@@ -43,16 +43,20 @@ class BagCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
                   child: SizedBox(
                     height: 140,
                     width: double.infinity,
                     child: image != null && image.isNotEmpty
-                        ? Image.network(
-                            image,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _fallbackBanner(),
-                          )
+                        ? (image.startsWith('assets/')
+                            ? Image.asset(image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => _fallbackBanner())
+                            : Image.network(image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    _fallbackBanner()))
                         : _fallbackBanner(),
                   ),
                 ),
@@ -83,7 +87,8 @@ class BagCard extends StatelessWidget {
                     top: 14,
                     left: 14,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: tag == 'Selling Fast'
                             ? const Color(0xFFFF8A00)
@@ -115,8 +120,11 @@ class BagCard extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                        color: isFavorite ? Colors.red : const Color(0xFF0A2E26),
+                        isFavorite
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        color:
+                            isFavorite ? Colors.red : const Color(0xFF0A2E26),
                         size: 18,
                       ),
                     ),
@@ -126,7 +134,8 @@ class BagCard extends StatelessWidget {
                   bottom: 12,
                   right: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -134,7 +143,8 @@ class BagCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFB800)),
+                        const Icon(Icons.star_rounded,
+                            size: 14, color: Color(0xFFFFB800)),
                         const SizedBox(width: 3),
                         Text(
                           '${bag.storeRating}',
@@ -197,19 +207,23 @@ class BagCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.storefront_outlined, size: 14, color: Colors.grey.shade500),
+                      Icon(Icons.storefront_outlined,
+                          size: 14, color: Colors.grey.shade500),
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           bag.storeName,
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                          style: TextStyle(
+                              color: Colors.grey.shade600, fontSize: 13),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF8A00).withValues(alpha: 0.12),
+                          color:
+                              const Color(0xFFFF8A00).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -232,7 +246,8 @@ class BagCard extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.access_time_rounded, size: 14, color: Color(0xFF0A5443)),
+                        const Icon(Icons.access_time_rounded,
+                            size: 14, color: Color(0xFF0A5443)),
                         const SizedBox(width: 6),
                         Text(
                           bag.pickupDate == 'today' ? 'Бүгін' : 'Ертең',
@@ -244,7 +259,8 @@ class BagCard extends StatelessWidget {
                         ),
                         Text(
                           ' · ${bag.pickupTime}',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          style: TextStyle(
+                              fontSize: 12, color: Colors.grey.shade600),
                         ),
                         const Spacer(),
                         Text(

@@ -43,11 +43,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EFE6),
+      backgroundColor: const Color(0xFFF8FAF7),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5EFE6),
+        backgroundColor: const Color(0xFFF8FAF7),
         elevation: 0,
-        title: const Text('Таңдаулылар', style: TextStyle(color: Color(0xFF0A2E26), fontWeight: FontWeight.bold)),
+        title: const Text('Таңдаулылар',
+            style: TextStyle(
+                color: Color(0xFF173B30), fontWeight: FontWeight.w800)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -58,11 +60,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.favorite_border, size: 72, color: Color(0xFFFF8A00)),
+                        Icon(Icons.favorite_border,
+                            size: 64, color: Color(0xFF0A5443)),
                         SizedBox(height: 16),
-                        Text('Таңдаулы пакет жоқ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text('Таңдаулы пакет жоқ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
                         SizedBox(height: 8),
-                        Text('Карточкадағы жүрекшені басып, пакетті сақтаңыз', textAlign: TextAlign.center),
+                        Text('Карточкадағы жүрекшені басып, пакетті сақтаңыз',
+                            textAlign: TextAlign.center),
                       ],
                     ),
                   ),
@@ -85,7 +91,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           },
                           onTap: () => Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => BagDetailScreen(bag: bag)),
+                            MaterialPageRoute(
+                                builder: (_) => BagDetailScreen(bag: bag)),
                           ).then((_) => _load()),
                         ),
                       );
