@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:math';
+import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -128,10 +130,49 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> createOrder(int bagId) async {
-    final res = await http.post(Uri.parse('$baseUrl/api/orders'),
-        headers: await _authHeaders(), body: jsonEncode({'bag_id': bagId}));
-    if (res.statusCode == 200) return jsonDecode(res.body);
-    throw Exception('Сатып алу мүмкін болмады. Алдымен кіріңіз.');
+    final prefs = await SharedPreferences.getInstance();
+    final keyName = 'pending_order_key_$bagId';
+    var requestKey = prefs.getString(keyName);
+    if (requestKey == null) {
+      final random = Random.secure();
+      requestKey = '${DateTime.now().microsecondsSinceEpoch}-'
+          '${List.generate(16, (_) => random.nextInt(16).toRadixString(16)).join()}';
+      await prefs.setString(keyName, requestKey);
+    }
+    final headers = await _authHeaders();
+    final body = jsonEncode({'bag_id': bagId, 'request_key': requestKey});
+    Object? lastError;
+
+    // Retry only transport failures, using the same key so a committed order
+    // cannot be charged or created twice if the response was lost.
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        final res = await http.post(Uri.parse('$baseUrl/api/orders'),
+            headers: headers, body: body).timeout(const Duration(seconds: 20));
+        if (res.statusCode == 200) {
+          await prefs.remove(keyName);
+          return jsonDecode(res.body);
+        }
+        final detail = _responseDetail(res.body);
+        throw Exception(detail ?? 'Сатып алу мүмкін болмады (${res.statusCode})');
+      } on http.ClientException catch (error) {
+        lastError = error;
+      } on TimeoutException catch (error) {
+        lastError = error;
+      }
+      if (attempt == 0) await Future<void>.delayed(const Duration(seconds: 1));
+    }
+    throw Exception(
+        'Байланыс үзілді. Тапсырыстың қайталанбауы үшін оны тексеріп, қайта көріңіз. ($lastError)');
+  }
+
+  static String? _responseDetail(String body) {
+    try {
+      final decoded = jsonDecode(body);
+      return decoded is Map<String, dynamic> ? decoded['detail']?.toString() : null;
+    } catch (_) {
+      return null;
+    }
   }
 
   static Future<List<dynamic>> getOrders() async {
